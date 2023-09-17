@@ -37,7 +37,9 @@ def analyze_data():
         alert = False
 
         variable = item["measurement__name"]
+        print("VARIABLE: "+variable)
         max_value = item["measurement__max_value"] or 0
+
         min_value = item["measurement__min_value"] or 0
 
         country = item['station__location__country__name']
@@ -45,21 +47,23 @@ def analyze_data():
         city = item['station__location__city__name']
         user = item['station__user__username']
 
-        if item["measurement__name"] != "battery":
+        
+
+        if variable != "battery":
             if item["check_value"] > max_value or item["check_value"] < min_value:
                 alert = True
         else:
             batteryLastData = data.objects.filter(variable = variable, country = country, state = state, user = user).order_by('-time')[1:1]
-            print("ÚLTIMOS DATOS BATERÍA: ")
-            print(batteryLastData)
             
-            # if item["check_value"] < batteryLastData[""]:
-            #     # ALARMA ADICIONAL PARA RECORDAR RECARGAR BATERÍA PORQUE NO LO HA HECHO:
-            #     message = "ALERT {} {} {}".format(variable, min_value, max_value)
-            #     topic = '{}/{}/{}/{}/in'.format(country, state, city, user)
-            #     print(datetime.now(), "Sending alert to {} {}".format(topic, variable))
-            #     client.publish(topic, message)
-            #     alert = True
+            if(item["check_value"] < min_value and batteryLastData["value"] > item["check_value"]):# CARLOS, ACÁ EN ESTA LÍNEA HAY QUE HACER LA CORRECCIÓN. 
+                # LO QUE QUIERO ES SABER SI EL ÚLTIMMO VALOR REPORTADO ES MENOR QUE EL ANTERIOR PARA SABER SI LA BATERÍA 
+                # SIGUE DESCARGÁNDOSE Y NO LA HAN CONECTADO.  
+                # ALARMA ADICIONAL PARA RECORDAR RECARGAR BATERÍA PORQUE NO LO HA HECHO:
+                message = "ALERT: CHARGE THE BATTERY NOW!"
+                topic = '{}/{}/{}/{}/in'.format(country, state, city, user)
+                print(datetime.now(), "Sending alert to {} suggesting the charge of the battery".format(topic))
+                client.publish(topic, message)
+                alert = True
 
         if alert:
             message = "ALERT {} {} {}".format(variable, min_value, max_value)
