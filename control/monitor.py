@@ -45,8 +45,21 @@ def analyze_data():
         city = item['station__location__city__name']
         user = item['station__user__username']
 
-        if item["check_value"] > max_value or item["check_value"] < min_value:
-            alert = True
+        if item["measurement__name"] != "battery":
+            if item["check_value"] > max_value or item["check_value"] < min_value:
+                alert = True
+        else:
+            batteryLastData = data.objects.filter(variable = variable, country = country, state = state, user = user).order_by('-time')[1:1]
+            print("ÚLTIMOS DATOS BATERÍA: ")
+            print(batteryLastData)
+            
+            # if item["check_value"] < batteryLastData[""]:
+            #     # ALARMA ADICIONAL PARA RECORDAR RECARGAR BATERÍA PORQUE NO LO HA HECHO:
+            #     message = "ALERT {} {} {}".format(variable, min_value, max_value)
+            #     topic = '{}/{}/{}/{}/in'.format(country, state, city, user)
+            #     print(datetime.now(), "Sending alert to {} {}".format(topic, variable))
+            #     client.publish(topic, message)
+            #     alert = True
 
         if alert:
             message = "ALERT {} {} {}".format(variable, min_value, max_value)
