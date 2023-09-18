@@ -18,8 +18,7 @@ def analyze_data():
 
     print("Calculando alertas...")
 
-    data = Data.objects.filter(
-        base_time__gte=datetime.now() - timedelta(hours=1))
+    data = Data.objects.filter(base_time__gte=datetime.now() - timedelta(hours=1))
     aggregation = data.annotate(check_value=Avg('avg_value')) \
         .select_related('station', 'measurement') \
         .select_related('station__user', 'station__location') \
@@ -47,13 +46,12 @@ def analyze_data():
         state = item['station__location__state__name']
         city = item['station__location__city__name']
         user = item['station__user__username']
-
         
         if variable != "bateria":
             if item["check_value"] > max_value or item["check_value"] < min_value:
                 alert = True
         else:
-            batteryLastData = Data.objects.filter(measurement_id = item['measurement_id'], station_id=item['station_id']).order_by('-time')[:2]
+            batteryLastData = Data.objects.filter(measurement = item['measurement_id'], station=item['station_id']).order_by('-time')[:2]
             
             if(item["check_value"] < min_value and batteryLastData[1]["value"] > batteryLastData[0]["value"]):
                 # ALARMA ADICIONAL PARA RECORDAR RECARGAR BATERÍA PORQUE NO LO HA HECHO:
@@ -120,7 +118,7 @@ def start_cron():
     Inicia el cron que se encarga de ejecutar la función analyze_data cada 5 minutos.
     '''
     print("Iniciando cron...")
-    schedule.every(5).minutes.do(analyze_data)
+    schedule.every(1).minutes.do(analyze_data)
     print("Servicio de control iniciado")
     while 1:
         schedule.run_pending()
