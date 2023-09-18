@@ -37,7 +37,6 @@ def analyze_data():
         alert = False
 
         variable = item["measurement__name"]
-        print("VARIABLE: "+variable)
         max_value = item["measurement__max_value"] or 0
 
         min_value = item["measurement__min_value"] or 0
@@ -48,8 +47,7 @@ def analyze_data():
         user = item['station__user__username']
 
         
-
-        if variable != "battery":
+        if variable != "bateria":
             if item["check_value"] > max_value or item["check_value"] < min_value:
                 alert = True
         else:
