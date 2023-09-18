@@ -51,7 +51,7 @@ def analyze_data():
             if item["check_value"] > max_value or item["check_value"] < min_value:
                 alert = True
         else:
-            batteryLastData = data.objects.filter(variable = variable, country = country, state = state, user = user).order_by('-time')[:2]
+            batteryLastData = Data.objects.filter(variable = variable, country = country, state = state, user = user).order_by('-time')[:2]
             
             if(item["check_value"] < min_value and batteryLastData[1]["value"] > batteryLastData[0]["value"]):
                 # ALARMA ADICIONAL PARA RECORDAR RECARGAR BATERÍA PORQUE NO LO HA HECHO:
