@@ -33,6 +33,8 @@ def analyze_data():
                 'station__location__state__name',
                 'station__location__country__name')
     alerts = 0
+    print("DATA: ")
+    print(data)
     for item in aggregation:
         alert = False
 
@@ -51,7 +53,7 @@ def analyze_data():
             if item["check_value"] > max_value or item["check_value"] < min_value:
                 alert = True
         else:
-            batteryLastData = Data.objects.filter(variable = variable, country = country, state = state, user = user).order_by('-time')[:2]
+            batteryLastData = Data.objects.filter(measurement_id = item['measurement_id'], station_id=item['station_id']).order_by('-time')[:2]
             
             if(item["check_value"] < min_value and batteryLastData[1]["value"] > batteryLastData[0]["value"]):
                 # ALARMA ADICIONAL PARA RECORDAR RECARGAR BATERÍA PORQUE NO LO HA HECHO:
