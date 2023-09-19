@@ -40,8 +40,8 @@ def analyze_data():
     # print(aggregation)
     alerts = 0
     for item in aggregation:
-        print("ITEM:  --------------------------------")
-        print(item)
+        # print("ITEM:  --------------------------------")
+        # print(item)
         alert = False
 
         variable = item["measurement__name"]
@@ -60,21 +60,24 @@ def analyze_data():
         else:
             if item["check_value"] < min_value:
                 alert = True
-                batteryLastData = Data.objects.filter(base_time__gte=datetime.now() - timedelta(hours=2), measurement = variable, station = 1)
+                batteryLastData = Data.objects.filter(base_time__gte=datetime.now() - timedelta(minutes=30), measurement = variable, station = 1)
                 batteryAggregate = batteryLastData.annotation(check_value=Avg('avg_value')).select_related('values').values('values')
                 print(batteryAggregate)
                 # batteryLastData = Data.objects.filter(measurement = item['measurement__name']).order_by('-time')[:2]
                 # print("BATTERY DATA:")
                 # print(batteryLastData)
-                # if batteryLastData[1]["value"] > batteryLastData[0]["value"]:
-                #     # ALARMA ADICIONAL PARA RECORDAR RECARGAR BATERÍA PORQUE NO LO HA HECHO:
-                #     print("BATERÍA BAJA Y DESCONECTADA DE LA ENERGÍA")
-                #     message = "ALERT: CHARGE THE BATTERY NOW!"
-                #     topic = '{}/{}/{}/{}/in'.format(country, state, city, user)
-                #     print(datetime.now(), "Sending alert to {} suggesting the charge of the battery".format(topic))
-                #     client.publish(topic, message)
-                # else:
-                #     print("BATERÍA RECARGANDO")
+                numdatos = batteryLastData['values'].length()
+                print("ÚLTIMO DATO: "+str(batteryLastData['values'][numdatos-1]))
+                print("ANTERIOR DATO: "+str(batteryLastData['values'][numdatos-2]))
+                if batteryLastData['values'][numdatos-2] > batteryLastData['values'][numdatos-1]:
+                    # ALARMA ADICIONAL PARA RECORDAR RECARGAR BATERÍA PORQUE NO LO HA HECHO:
+                    print("BATERÍA BAJA Y DESCONECTADA DE LA ENERGÍA")
+                    message = "ALERT: CHARGE THE BATTERY NOW!"
+                    topic = '{}/{}/{}/{}/in'.format(country, state, city, user)
+                    print(datetime.now(), "Sending alert to {} suggesting the charge of the battery".format(topic))
+                    client.publish(topic, message)
+                else:
+                    print("BATERÍA RECARGANDO")
 
         if alert:
             message = "ALERT {} {} {}".format(variable, min_value, max_value)
