@@ -33,7 +33,7 @@ def analyze_data():
                 'station__location__state__name',
                 'station__location__country__name')
     alerts = 0
-    print("AGGREGATION:")
+    print("AGGREGATION: ")
     print(aggregation)
     for item in aggregation:
         alert = False
