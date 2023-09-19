@@ -58,7 +58,9 @@ def analyze_data():
             if item["check_value"] > max_value or item["check_value"] < min_value:
                 alert = True
         else:
-            if item["check_value"] < min_value:
+            # if item["check_value"] < min_value:
+            numvalores = item["values"].length()
+            if item['values'][numvalores-1] < min_value:
                 alert = True
                 batteryLastData = Data.objects.filter(base_time__gte=datetime.now() - timedelta(minutes=30), measurement = variable, station = 1)
                 batteryAggregate = batteryLastData.annotation(check_value=Avg('avg_value')).select_related('values').values('values')
