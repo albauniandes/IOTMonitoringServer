@@ -21,7 +21,7 @@ def analyze_data():
 
     data = Data.objects.filter(base_time__gte=datetime.now() - timedelta(hours=1))
     
-    print(data)
+    # print(data)
     aggregation = data.annotate(check_value=Avg('avg_value')) \
         .select_related('station', 'measurement') \
         .select_related('station__user', 'station__location') \
@@ -36,8 +36,8 @@ def analyze_data():
                 'station__location__country__name')
     alerts = 0
     for item in aggregation:
-        print("ITEM:  --------------------------------")
-        print(item)
+        # print("ITEM:  --------------------------------")
+        # print(item)
         alert = False
 
         variable = item["measurement__name"]
@@ -56,6 +56,8 @@ def analyze_data():
         else:
             if item["check_value"] < min_value:
                 alert = True
+                battery_last_data = Data.objects.filter(station=1).order_by('-time')[:2]
+                print(battery_last_data)
                 # batteryLastData = Data.objects.filter(measurement = item['measurement__name']).order_by('-time')[:2]
                 # print("BATTERY DATA:")
                 # print(batteryLastData)
