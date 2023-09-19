@@ -36,10 +36,13 @@ def analyze_data():
                 'station__location__state__name',
                 'station__location__country__name',
                 'values')
+        
+    # print("AGGREGATION: ")
+    # print(aggregation)
     alerts = 0
     for item in aggregation:
-        # print("ITEM:  --------------------------------")
-        # print(item)
+        print("ITEM:  --------------------------------")
+        print(item)
         alert = False
 
         variable = item["measurement__name"]
