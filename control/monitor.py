@@ -33,6 +33,8 @@ def analyze_data():
                 'station__location__state__name',
                 'station__location__country__name')
     alerts = 0
+    print("AGGREGATION:")
+    print(aggregation)
     for item in aggregation:
         alert = False
 
@@ -52,18 +54,18 @@ def analyze_data():
         else:
             if item["check_value"] < min_value:
                 alert = True
-                batteryLastData = Data.objects.filter(measurement = item['measurement__name']).order_by('-time')[:2]
-                print("BATTERY DATA:")
-                print(batteryLastData)
-                if batteryLastData[1]["value"] > batteryLastData[0]["value"]:
-                    # ALARMA ADICIONAL PARA RECORDAR RECARGAR BATERÍA PORQUE NO LO HA HECHO:
-                    print("BATERÍA BAJA Y DESCONECTADA DE LA ENERGÍA")
-                    message = "ALERT: CHARGE THE BATTERY NOW!"
-                    topic = '{}/{}/{}/{}/in'.format(country, state, city, user)
-                    print(datetime.now(), "Sending alert to {} suggesting the charge of the battery".format(topic))
-                    client.publish(topic, message)
-                else:
-                    print("BATERÍA RECARGANDO")
+                # batteryLastData = Data.objects.filter(measurement = item['measurement__name']).order_by('-time')[:2]
+                # print("BATTERY DATA:")
+                # print(batteryLastData)
+                # if batteryLastData[1]["value"] > batteryLastData[0]["value"]:
+                #     # ALARMA ADICIONAL PARA RECORDAR RECARGAR BATERÍA PORQUE NO LO HA HECHO:
+                #     print("BATERÍA BAJA Y DESCONECTADA DE LA ENERGÍA")
+                #     message = "ALERT: CHARGE THE BATTERY NOW!"
+                #     topic = '{}/{}/{}/{}/in'.format(country, state, city, user)
+                #     print(datetime.now(), "Sending alert to {} suggesting the charge of the battery".format(topic))
+                #     client.publish(topic, message)
+                # else:
+                #     print("BATERÍA RECARGANDO")
 
         if alert:
             message = "ALERT {} {} {}".format(variable, min_value, max_value)
