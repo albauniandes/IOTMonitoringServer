@@ -57,19 +57,16 @@ def analyze_data():
             numvalores = len(item["values"])
             print("ÚLTIMO DATO BATERÍA: "+ str(item['values'][numvalores-1]))
             print("ANTERIOR DATO BATERÍA: "+ str(item['values'][numvalores-2]))
-            print("VALOR MÍNIMO DE BATERÍA: " + str(min_value))
+            # print("VALOR MÍNIMO DE BATERÍA: " + str(min_value))
             if item['values'][numvalores-1] < 25.0:
                 alert = True
-                batteryLastData = Data.objects.filter(base_time__gte=datetime.now() - timedelta(minutes=30), measurement = variable, station = 1)
-                batteryAggregate = batteryLastData.annotation(check_value=Avg('avg_value')).select_related('values').values('values')
-                print(batteryAggregate)
-                # batteryLastData = Data.objects.filter(measurement = item['measurement__name']).order_by('-time')[:2]
-                # print("BATTERY DATA:")
-                # print(batteryLastData)
-                numdatos = len(batteryLastData['values'])
-                print("ÚLTIMO DATO: "+str(batteryLastData['values'][numdatos-1]))
-                print("ANTERIOR DATO: "+str(batteryLastData['values'][numdatos-2]))
-                if batteryLastData['values'][numdatos-2] > batteryLastData['values'][numdatos-1]:
+                # batteryLastData = Data.objects.filter(base_time__gte=datetime.now() - timedelta(minutes=30), measurement = variable, station = 1)
+                # batteryAggregate = batteryLastData.annotation(check_value=Avg('avg_value')).select_related('values').values('values')
+                # print(batteryAggregate)
+                # numdatos = len(batteryLastData['values'])
+                # print("ÚLTIMO DATO: "+str(batteryLastData['values'][numdatos-1]))
+                # print("ANTERIOR DATO: "+str(batteryLastData['values'][numdatos-2]))
+                if item['values'][numvalores-2] > item['values'][numvalores-1]:
                     # ALARMA ADICIONAL PARA RECORDAR RECARGAR BATERÍA PORQUE NO LO HA HECHO:
                     print("BATERÍA BAJA Y DESCONECTADA DE LA ENERGÍA")
                     message = "ALERT: CHARGE THE BATTERY NOW!"
