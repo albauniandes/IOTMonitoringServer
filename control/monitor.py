@@ -59,7 +59,7 @@ def analyze_data():
                 alert = True
         else:
             # if item["check_value"] < min_value:
-            numvalores = item["values"].length()
+            numvalores = len(item["values"])
             if item['values'][numvalores-1] < min_value:
                 alert = True
                 batteryLastData = Data.objects.filter(base_time__gte=datetime.now() - timedelta(minutes=30), measurement = variable, station = 1)
@@ -68,7 +68,7 @@ def analyze_data():
                 # batteryLastData = Data.objects.filter(measurement = item['measurement__name']).order_by('-time')[:2]
                 # print("BATTERY DATA:")
                 # print(batteryLastData)
-                numdatos = batteryLastData['values'].length()
+                numdatos = len(batteryLastData['values'])
                 print("ÚLTIMO DATO: "+str(batteryLastData['values'][numdatos-1]))
                 print("ANTERIOR DATO: "+str(batteryLastData['values'][numdatos-2]))
                 if batteryLastData['values'][numdatos-2] > batteryLastData['values'][numdatos-1]:
