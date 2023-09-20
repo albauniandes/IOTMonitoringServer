@@ -36,17 +36,12 @@ def analyze_data():
                 'station__location__country__name',
                 'values')
         
-    # print("AGGREGATION: ")
-    # print(aggregation)
     alerts = 0
     for item in aggregation:
-        # print("ITEM:  --------------------------------")
-        # print(item)
         alert = False
 
         variable = item["measurement__name"]
         max_value = item["measurement__max_value"] or 0
-
         min_value = item["measurement__min_value"] or 0
 
         country = item['station__location__country__name']
@@ -63,7 +58,7 @@ def analyze_data():
             print("ÚLTIMO DATO BATERÍA: "+ str(item['values'][numvalores-1]))
             print("ANTERIOR DATO BATERÍA: "+ str(item['values'][numvalores-2]))
             print("VALOR MÍNIMO DE BATERÍA: " + str(min_value))
-            if item['values'][numvalores-1] < min_value:
+            if item['values'][numvalores-1] < 25.0:
                 alert = True
                 batteryLastData = Data.objects.filter(base_time__gte=datetime.now() - timedelta(minutes=30), measurement = variable, station = 1)
                 batteryAggregate = batteryLastData.annotation(check_value=Avg('avg_value')).select_related('values').values('values')
